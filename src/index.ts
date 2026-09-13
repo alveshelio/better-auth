@@ -592,9 +592,11 @@ export const surrealAdapter = (config: SurrealDBAdapterConfig) => {
 					model,
 				);
 				// SurrealDB v3 has no LIMIT on DELETE; the one-row bound lives
-				// in an inner SELECT. Selector and mutation evaluate in one
-				// storage-engine step, so concurrent consumers cannot both win
-				// the same row and a guard that matches nothing changes nothing.
+				// in an inner SELECT — the officially documented workaround
+				// (https://surrealdb.com/docs/reference/query-language/statements/delete).
+				// Selector and mutation evaluate in one storage-engine step, so
+				// concurrent consumers cannot both win the same row and a guard
+				// that matches nothing changes nothing.
 				try {
 					const rows = await withConflictRetry(() =>
 						runQuery<SurrealRecord>(
